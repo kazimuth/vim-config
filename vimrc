@@ -3,21 +3,30 @@ set nocompatible
 set shell=/bin/sh
 filetype off
 
-" Load vim-plug
-if empty(glob("~/.vim/autoload/plug.vim"))
-    execute '!mkdir -p ~/.vim/autoload'
-    execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
-endif
-
-" Setup python
+" Setup neovim/vim compatibility stuff
 if has('nvim')
-    if !executable('virtualenv')
-        echom 'Please install virtualenv'
+    let s:vim_root = $XDG_CONFIG_HOME.'/nvim'
+
+    if empty(glob(s:vim_root.'/python'))
+        if !executable('virtualenv')
+            echom 'Please install virtualenv'
+        endif
+
+        execute '!virtualenv '.s:vim_root.'/python'
+        execute '!'.s:vim_root.'/python/bin/pip2 install -r '.s:vim_root.'/requirements.txt'
     endif
 
-
-    let g:python_host_prog='/usr/local/bin/python'
+    let g:python_host_prog=s:vim_root.'/python/bin/python'
+else
+    let s:vim_root = '~/.vim'
 endif
+
+" Load vim-plug
+if empty(glob(s:vim_root.'/autoload/plug.vim'))
+    execute '!mkdir -p '.s:vim_root.'/autoload'
+    execute '!curl -fLo '.s:vim_root.'/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+endif
+
 
 " Load plugins
 call plug#begin('~/.vim/plugged')
