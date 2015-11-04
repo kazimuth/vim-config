@@ -27,7 +27,6 @@ if empty(glob(s:vim_root.'/autoload/plug.vim'))
     execute '!curl -fLo '.s:vim_root.'/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
 endif
 
-
 " Load plugins
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
@@ -76,12 +75,6 @@ set cursorline
 " Don't fold markdown
 let g:vim_markdown_folding_disabled=1
 
-" Configure racer
-set hidden
-let g:racer_cmd = "/Users/james/Dev/clones/racer/target/release/racer"
-let $RUST_SRC_PATH = "/Users/james/Dev/clones/rust/src/"
-let g:ycm_semantic_triggers = { 'rust' : ['::', '.'] }
-
 " Extra keybinds
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
@@ -89,3 +82,10 @@ noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
 noremap ; :
 inoremap jk <Esc>
+
+" Racer / rust autocompletion stuff
+set hidden
+let g:ycm_semantic_triggers = { 'rust' : ['::', '.'] }
+
+" Pull in local configuration (e.g. racer location)
+source local.vim
