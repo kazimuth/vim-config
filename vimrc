@@ -28,7 +28,7 @@ if empty(glob(s:vim_root.'/autoload/plug.vim'))
 endif
 
 " Load plugins
-call plug#begin('~/.vim/plugged')
+call plug#begin(s:vim_root.'/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'plasticboy/vim-markdown'
 Plug 'bling/vim-airline'
@@ -36,7 +36,7 @@ Plug 'wting/rust.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'Valloric/YouCompleteMe'
 Plug 'cespare/vim-toml'
-Plug 'phildawes/racer'
+Plug 'racer-rust/vim-racer'
 Plug 'lambdatoast/elm.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
@@ -83,9 +83,12 @@ noremap <C-l> <C-w>l
 noremap ; :
 inoremap jk <Esc>
 
+" Because I always accidentally type :w\ and save things as "\"
+ca w\ w
+
 " Racer / rust autocompletion stuff
 set hidden
 let g:ycm_semantic_triggers = { 'rust' : ['::', '.'] }
 
 " Pull in local configuration (e.g. racer location)
-source local.vim
+execute 'source '.s:vim_root.'/local.vim'
