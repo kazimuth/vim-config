@@ -25,6 +25,7 @@ endif
 if empty(glob(s:vim_root.'/autoload/plug.vim'))
     execute '!mkdir -p '.s:vim_root.'/autoload'
     execute '!curl -fLo '.s:vim_root.'/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+    source s:vim_root.'/autoload/plug.vim'
 endif
 
 " Load plugins
@@ -34,6 +35,7 @@ Plug 'plasticboy/vim-markdown'
 Plug 'bling/vim-airline'
 Plug 'wting/rust.vim'
 Plug 'flazz/vim-colorschemes'
+Plug 'benekastah/neomake'
 Plug 'Valloric/YouCompleteMe'
 Plug 'cespare/vim-toml'
 Plug 'racer-rust/vim-racer'
