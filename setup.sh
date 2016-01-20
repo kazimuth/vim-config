@@ -23,7 +23,7 @@ curl -fLo ./autoload/plug.vim --create-dirs 'https://raw.githubusercontent.com/j
 vim +PlugInstall
 
 cargo install rustfmt
-npm install -g js-beautify jshint
+npm install -g js-beautify jshint tern
 
 if [ ! -d ~/.config/nvim ]; then
     mkdir -p ~/.config
