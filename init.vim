@@ -38,7 +38,7 @@ Plug 'jrozner/vim-antlr', { 'for' : 'antlr' }
 Plug 'syngan/vim-vimlint', { 'for' : 'vim' }
 
 " Syntax and formatting
-
+" Note: syntastic conflicts with YCM on c-derived languages.
 Plug 'scrooloose/syntastic', { 'for' : [ 'python', 'javascript', 'rust', 'json',
                                        \ 'html', 'xml', 'go', 'sh', 'asm', 'go',
                                        \ 'elixir', 'cabal', 'haskell', 'vim'] }
