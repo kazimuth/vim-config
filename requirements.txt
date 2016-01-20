@@ -1,6 +1,15 @@
+astroid==1.4.4
+autopep8==1.2.1
+colorama==0.3.6
 futures==3.0.3
 greenlet==0.4.9
+jedi==0.9.0
+lazy-object-proxy==1.2.1
 msgpack-python==0.4.6
 neovim==0.1.0
+pep8==1.7.0
+pylint==1.5.4
+six==1.10.0
 trollius==2.0
 wheel==0.26.0
+wrapt==1.10.6

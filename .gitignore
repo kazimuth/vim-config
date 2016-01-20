@@ -1,7 +1,7 @@
 autoload
 .netrwhist
 plugged
-python
+env
 local.vim
-
 *~
+
