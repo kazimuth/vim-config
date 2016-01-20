@@ -117,7 +117,6 @@ function! GoToDecMaybeYcm()
 endfunction
 
 nnoremap gd :call GoToDecMaybeYcm()<cr>
-nnoremap <leader>f YcmCompleter FixIt
 
 """ Syntastic
 let g:syntastic_always_populate_loc_list = 1
