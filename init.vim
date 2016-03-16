@@ -20,11 +20,15 @@ call plug#begin(s:vim_root.'/plugged')
 
 " Global plugins
 Plug 'tpope/vim-sensible'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 Plug 'airblade/vim-gitgutter' 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer
-                                        \ --tern-completer --racer-completer' }
+Plug 'ervandew/supertab'
+Plug 'Valloric/YouCompleteMe' ", { 'do': './install.py --clang-completer
+"                                        \ --tern-completer --racer-completer' }
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 " Language-specific
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
@@ -54,7 +58,6 @@ filetype plugin indent on
 " Visual customization
 syntax on
 set background=dark
-colorscheme solarized
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -63,7 +66,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 set ignorecase
-set cursorline
+" set cursorline
 set hidden
 
 " Extra keybinds
@@ -87,7 +90,6 @@ au Filetype xml setl sw=2 sts=2 et
 let g:airline_left_sep = ' '
 let g:airline_right_sep = ' '
 let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.whitespace = 'Ξ'
@@ -104,6 +106,10 @@ let g:ycm_collect_identifiers_from_tags_files = 0 "default 0
 let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
 let g:ycm_server_log_level = 'info' "default info
 
+let g:ycm_use_ultisnips_completer = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+
 " Set in local.vim:
 " let g:ycm_rust_src_path = <path to rust source installation>
 
@@ -118,6 +124,38 @@ endfunction
 
 nnoremap gd :call GoToDecMaybeYcm()<cr>
 
+nnoremap <leader>d :YcmCompleter GetDoc<cr>
+
+let g:ycm_semantic_triggers =  {
+    \   'c' : ['->', '.', 're!\w'],
+    \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+    \             're!\[.*\]\s', 're!\w'],
+    \   'ocaml' : ['.', '#', 're!\w'],
+    \   'cpp,objcpp' : ['->', '.', '::', 're!\w'],
+    \   'perl' : ['->', 're!\w'],
+    \   'php' : ['->', '::', 're!\w'],
+    \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.', 're!\w'],
+    \   'ruby' : ['.', '::', 're!\w'],
+    \   'lua' : ['.', ':', 're!\w'],
+    \   'erlang' : [':', 're!\w'],
+    \ }
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+
+""" SuperTab
+let g:SuperTabDefaultCompletionType = '<C-n>'
+let g:SuperTabCrMapping = 0
+
+""" Ultisnips
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<c-e>"
+let g:UltiSnipsListSnippets = "<c-tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+let g:UltiSnipsUsePythonVersion = 2
+
 """ Syntastic
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -130,7 +168,7 @@ let g:vim_markdown_folding_disabled=1
 """ Autoformat
 nnoremap <leader>f :Autoformat<cr>
 
-au BufWrite *.py,*.js,*.rs,*.go,*.css,*.c,*.cpp,*.objc :Autoformat
+"au BufWrite *.py,*.js,*.rs,*.go,*.css,*.c,*.cpp,*.objc :Autoformat
 
 " Source local setttings
 execute "source ".s:vim_root."/local.vim"
