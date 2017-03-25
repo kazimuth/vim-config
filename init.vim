@@ -7,10 +7,14 @@ filetype off
 if has('nvim')
     let s:vim_root = $XDG_CONFIG_HOME.'/nvim'
 
-    let g:python_host_prog=s:vim_root.'/env/bin/python'
+    " for neovim: in local.vim:
+    " let g:python_host_prog='/path/to/python'
 else
     let s:vim_root = '~/.vim'
 endif
+
+" Source local setttings
+execute "source ".s:vim_root."/local.vim"
 
 " Add extra python stuff to PATH
 let $PATH .= ':'.s:vim_root.'/env/bin'
@@ -19,12 +23,16 @@ let $PATH .= ':'.s:vim_root.'/env/bin'
 call plug#begin(s:vim_root.'/plugged')
 
 " Global plugins
-Plug 'tpope/vim-sensible'
-Plug 'bling/vim-airline'
+if !has('nvim')
+    Plug 'tpope/vim-sensible'
+endif
+Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 Plug 'airblade/vim-gitgutter' 
+Plug 'tpope/vim-fugitive'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer
                                         \ --tern-completer --racer-completer' }
+Plug 'editorconfig/editorconfig-vim'
 
 " Language-specific
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
@@ -36,12 +44,26 @@ Plug 'rstacruz/sparkup', { 'for': ['xml', 'html'], 'rtp': 'vim/' }
 Plug 'pangloss/vim-javascript', { 'for' : 'javascript' }
 Plug 'jrozner/vim-antlr', { 'for' : 'antlr' }
 Plug 'syngan/vim-vimlint', { 'for' : 'vim' }
+Plug 'rdnetto/YCM-Generator', { 'for' : ['c', 'cpp', 'cmake', 'make'], 'branch': 'stable' }
+Plug 'derekwyatt/vim-scala', { 'for' : ['scala', 'sbt', 'sbt.scala'] }
+Plug 'saltstack/salt-vim', { 'for' : ['sls'] }
+Plug 'vim-scripts/LanguageTool', { 'for' : ['text', 'markdown'] }
+Plug 'elixir-lang/vim-elixir' ", { 'for' : ['.ex', '.eex', '.exs'] }
+Plug 'dcharbon/vim-flatbuffers', { 'for' : ['fbs'] }
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+"Plug 'Quramy/tsuquyomi', {'for': ['typescript'] }
+Plug 'leafgarland/typescript-vim', { 'for': ['typescript'] }
+Plug 'michaeltanner/vim-bluespec'
+Plug 'eagletmt/neco-ghc', { 'for': ['haskell'] }
 
 " Syntax and formatting
 " Note: syntastic conflicts with YCM on c-derived languages.
-Plug 'scrooloose/syntastic', { 'for' : [ 'python', 'javascript', 'rust', 'json',
-                                       \ 'html', 'xml', 'go', 'sh', 'asm', 'go',
-                                       \ 'elixir', 'cabal', 'haskell', 'vim'] }
+"Plug 'scrooloose/syntastic', { 'for' : [ 'python', 'javascript', 'rust', 'json',
+"                                       \ 'html', 'xml', 'go', 'sh', 'asm', 'go',
+"                                       \ 'elixir', 'cabal', 'haskell', 'vim',
+"                                       \ 'typescript'] }
+Plug 'neomake/neomake'
+
 
 Plug 'Chiel92/vim-autoformat', { 'for' : [ 'python', 'javascript', 'rust', 'go',
                                          \ 'css', 'dart', 'c', 'cpp', 'objc' ] }
@@ -65,6 +87,8 @@ set expandtab
 set ignorecase
 set cursorline
 set hidden
+set spell
+set spellcapcheck=
 
 " Extra keybinds
 noremap <C-j> <C-w>j
@@ -74,14 +98,29 @@ noremap <C-l> <C-w>l
 noremap ; :
 inoremap jk <Esc>
 
+" Terminal keybinds
+tnoremap jk <C-\><C-n>
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-h> <C-\><C-n><C-w>h
+tnoremap <C-l> <C-\><C-n><C-w>l
+
 " Because I always accidentally type :w\ and save things as "\"
 ca w\ w
+ca w' w
 
 " Filetype configuration
 au Filetype ant setl sw=2 sts=2 et
 au Filetype xml setl sw=2 sts=2 et
+au Filetype javascript setl sw=2 sts=2 et
+au Filetype json setl sw=2 sts=2 et
+au Filetype css setl sw=2 sts=2 et
 
 " PLUGINS
+
+""" neco-ghc
+let g:haskellmode_completion_ghc = 0
+au FileType haskell setlocal omnifunc=necoghc#omnifunc
 
 """ Airline
 let g:airline_left_sep = ' '
@@ -103,9 +142,12 @@ let g:ycm_collect_identifiers_from_tags_files = 0 "default 0
 
 let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
 let g:ycm_server_log_level = 'info' "default info
+let g:ycm_semantic_triggers = {'haskell' : ['.']}
 
 " Set in local.vim:
-" let g:ycm_rust_src_path = <path to rust source installation>
+" let g:ycm_rust_src_path = <path to rust source installation>l
+" let g:ycm_extra_conf_globlist = ['~/dev/*','!~/*'] - .ycm files to load
+" without prompt
 
 function! GoToDecMaybeYcm()
     if &filetype =~ 'vc\|cpp\|objc\|objcpp\|python\|cs\|rust\|javascript\|typescript'
@@ -119,10 +161,28 @@ endfunction
 nnoremap gd :call GoToDecMaybeYcm()<cr>
 
 """ Syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"let g:syntastic_javascript_checkers = ['eslint']
+"
+""" Neomake
+au! BufWritePost * Neomake
+
+let g:neomake_error_sign = {'text': '>>', 'texthl': 'Error'}
+let g:neomake_warning_sign = {'text': '>>', 'texthl': 'Todo'}
+let g:neomake_message_sign = {'text': '>>', 'texthl': 'NeomakeMessageSign'}
+let g:neomake_info_sign = {'text': 'i', 'texthl': 'NeomakeInfoSign'}
+let g:neomake_typescript_enabled_makers = []
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_rust_enabled_makers = []
+let g:neomake_lex_enabled_makers = []
+
+""" Tsuquyomi
+let g:tsuquyomi_completion_detail = 1
+let g:tsuquyomi_disable_quickfix = 1
+au! BufWritePost *.ts TsuGeterrProject
 
 """ Markdown
 let g:vim_markdown_folding_disabled=1
@@ -130,7 +190,16 @@ let g:vim_markdown_folding_disabled=1
 """ Autoformat
 nnoremap <leader>f :Autoformat<cr>
 
-au BufWrite *.py,*.js,*.rs,*.go,*.css,*.c,*.cpp,*.objc :Autoformat
+""" Rustpeg & LALRPOP highlighting
+au BufRead,BufNewFile *.rustpeg set filetype=rust
+au BufRead,BufNewFile *.lalrpop set filetype=rust
 
-" Source local setttings
-execute "source ".s:vim_root."/local.vim"
+""" Default workspaces
+" Workspace Setup
+" ----------------
+function! DefaultWorkspace()
+    " Rough num columns to decide between laptop and big monitor screens
+    vs term://fish
+    file Shell
+endfunction
+command! -register DefaultWorkspace call DefaultWorkspace()

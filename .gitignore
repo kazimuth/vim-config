@@ -4,4 +4,4 @@ plugged
 env
 local.vim
 *~
-
+spell/*.spl
