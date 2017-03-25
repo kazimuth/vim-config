@@ -33,6 +33,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer
                                         \ --tern-completer --racer-completer' }
 Plug 'editorconfig/editorconfig-vim'
+Plug 'ervandew/supertab'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 " Language-specific
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
@@ -77,9 +80,6 @@ filetype plugin indent on
 syntax on
 set background=dark
 colorscheme solarized
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
 set smartindent
 set tabstop=4
 set shiftwidth=4
@@ -123,10 +123,12 @@ let g:haskellmode_completion_ghc = 0
 au FileType haskell setlocal omnifunc=necoghc#omnifunc
 
 """ Airline
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
 let g:airline_left_sep = ' '
 let g:airline_right_sep = ' '
 let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.whitespace = 'Ξ'
@@ -144,6 +146,10 @@ let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
 let g:ycm_server_log_level = 'info' "default info
 let g:ycm_semantic_triggers = {'haskell' : ['.']}
 
+let g:ycm_use_ultisnips_completer = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+
 " Set in local.vim:
 " let g:ycm_rust_src_path = <path to rust source installation>l
 " let g:ycm_extra_conf_globlist = ['~/dev/*','!~/*'] - .ycm files to load
@@ -159,6 +165,38 @@ function! GoToDecMaybeYcm()
 endfunction
 
 nnoremap gd :call GoToDecMaybeYcm()<cr>
+
+nnoremap <leader>d :YcmCompleter GetDoc<cr>
+
+let g:ycm_semantic_triggers =  {
+    \   'c' : ['->', '.', 're!\w'],
+    \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+    \             're!\[.*\]\s', 're!\w'],
+    \   'ocaml' : ['.', '#', 're!\w'],
+    \   'cpp,objcpp' : ['->', '.', '::', 're!\w'],
+    \   'perl' : ['->', 're!\w'],
+    \   'php' : ['->', '::', 're!\w'],
+    \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.', 're!\w'],
+    \   'ruby' : ['.', '::', 're!\w'],
+    \   'lua' : ['.', ':', 're!\w'],
+    \   'erlang' : [':', 're!\w'],
+    \ }
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+
+""" SuperTab
+let g:SuperTabDefaultCompletionType = '<C-n>'
+let g:SuperTabCrMapping = 0
+
+""" Ultisnips
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<c-e>"
+let g:UltiSnipsListSnippets = "<c-tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+let g:UltiSnipsUsePythonVersion = 2
 
 """ Syntastic
 "let g:syntastic_always_populate_loc_list = 1
@@ -203,3 +241,4 @@ function! DefaultWorkspace()
     file Shell
 endfunction
 command! -register DefaultWorkspace call DefaultWorkspace()
+"au BufWrite *.py,*.js,*.rs,*.go,*.css,*.c,*.cpp,*.objc :Autoformat
