@@ -13,7 +13,7 @@ else
     let s:vim_root = '~/.vim'
 endif
 
-" Source local setttings
+" Source local settings
 execute "source ".s:vim_root."/local.vim"
 
 " Add extra python stuff to PATH
@@ -23,55 +23,75 @@ let $PATH .= ':'.s:vim_root.'/env/bin'
 call plug#begin(s:vim_root.'/plugged')
 
 " Global plugins
-if !has('nvim')
-    Plug 'tpope/vim-sensible'
-endif
+Plug 'tpope/vim-sensible'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
-Plug 'airblade/vim-gitgutter' 
+Plug 'Shougo/vimproc.vim'
+
+" Lazily loaded plugins
+"" Git
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer
-                                        \ --tern-completer --racer-completer' }
-Plug 'editorconfig/editorconfig-vim'
+
+"" Snips
 Plug 'ervandew/supertab'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
-" Language-specific
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-Plug 'tfnico/vim-gradle', { 'for': 'gradle' }
-Plug 'wting/rust.vim', { 'for': [ 'rust', 'toml' ] }
-Plug 'cespare/vim-toml', { 'for': 'toml' }
-Plug 'lambdatoast/elm.vim', { 'for': 'elm' }
-Plug 'rstacruz/sparkup', { 'for': ['xml', 'html'], 'rtp': 'vim/' }
-Plug 'pangloss/vim-javascript', { 'for' : 'javascript' }
-Plug 'jrozner/vim-antlr', { 'for' : 'antlr' }
-Plug 'syngan/vim-vimlint', { 'for' : 'vim' }
-Plug 'rdnetto/YCM-Generator', { 'for' : ['c', 'cpp', 'cmake', 'make'], 'branch': 'stable' }
-Plug 'derekwyatt/vim-scala', { 'for' : ['scala', 'sbt', 'sbt.scala'] }
-Plug 'saltstack/salt-vim', { 'for' : ['sls'] }
-Plug 'vim-scripts/LanguageTool', { 'for' : ['text', 'markdown'] }
-Plug 'elixir-lang/vim-elixir' ", { 'for' : ['.ex', '.eex', '.exs'] }
-Plug 'dcharbon/vim-flatbuffers', { 'for' : ['fbs'] }
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-"Plug 'Quramy/tsuquyomi', {'for': ['typescript'] }
-Plug 'leafgarland/typescript-vim', { 'for': ['typescript'] }
-Plug 'michaeltanner/vim-bluespec'
-Plug 'eagletmt/neco-ghc', { 'for': ['haskell'] }
-
-" Syntax and formatting
-" Note: syntastic conflicts with YCM on c-derived languages.
-"Plug 'scrooloose/syntastic', { 'for' : [ 'python', 'javascript', 'rust', 'json',
-"                                       \ 'html', 'xml', 'go', 'sh', 'asm', 'go',
-"                                       \ 'elixir', 'cabal', 'haskell', 'vim',
-"                                       \ 'typescript'] }
+"" Makers & Formatters
 Plug 'neomake/neomake'
+Plug 'Chiel92/vim-autoformat'
 
+"" Other tools
+Plug 'idanarye/vim-vebugger'
 
-Plug 'Chiel92/vim-autoformat', { 'for' : [ 'python', 'javascript', 'rust', 'go',
-                                         \ 'css', 'dart', 'c', 'cpp', 'objc' ] }
+"" Configuration
+Plug 'editorconfig/editorconfig-vim',
+    \ {
+    \   'for': 'lazyplugin'
+    \ }
 
+"" YCM
+Plug 'Valloric/YouCompleteMe', 
+    \ {
+    \   'do': './install.py --clang-completer --tern-completer --racer-completer',
+    \   'for': 'lazyplugin'
+    \ }
+
+" Language-specific
+Plug 'jrozner/vim-antlr',           { 'for': ['antlr'] }
+Plug 'michaeltanner/vim-bluespec',  { 'for': ['bluespec'] }
+Plug 'rdnetto/YCM-Generator',       { 'for': ['c', 'cpp', 'cmake', 'make'], 'branch': 'stable' }
+Plug 'elixir-lang/vim-elixir',      { 'for': ['elixir'] }
+Plug 'lambdatoast/elm.vim',         { 'for': ['elm'] }
+Plug 'dcharbon/vim-flatbuffers',    { 'for': ['fbs'] }
+Plug 'tfnico/vim-gradle',           { 'for': ['gradle'] }
+Plug 'eagletmt/neco-ghc',           { 'for': ['haskell'] }
+Plug 'pangloss/vim-javascript',     { 'for': ['javascript'] }
+Plug 'plasticboy/vim-markdown',     { 'for': ['markdown'] }
+Plug 'wting/rust.vim',              { 'for': ['rust', 'toml'] }
+Plug 'derekwyatt/vim-scala',        { 'for': ['scala', 'sbt', 'sbt.scala'] }
+Plug 'saltstack/salt-vim',          { 'for': ['sls'] }
+Plug 'vim-scripts/LanguageTool',    { 'for': ['text', 'markdown'] }
+Plug 'cespare/vim-toml',            { 'for': ['toml'] }
+Plug 'Quramy/tsuquyomi',            { 'for': ['typescript'] }
+Plug 'leafgarland/typescript-vim',  { 'for': ['typescript'] }
+Plug 'syngan/vim-vimlint',          { 'for': ['vim'] }
+Plug 'tweekmonster/startuptime.vim',{ 'for': ['vim'] }
+Plug 'rstacruz/sparkup',            { 'for': ['xml', 'html'], 'rtp': 'vim/' }
+Plug 'b1narykid/llvm.vim',          { 'for': ['llvm', 'tablegen'], 'do': 'bash fetch.sh' }
 call plug#end()
+
+" Load some plugins lazily
+" this is a dirty hack
+" au BufNewFile lazyplugin setfiletype lazyplugin
+" function RunLazyLoadPlugins()
+"     edit lazyplugin
+"     buffer 1
+"     bdel! lazyplugin
+"     echom "Lazy plugins loaded"
+" endfunction
+" let timer = timer_start(2000, 'RunLazyLoadPlugins', {'repeat': 1})
 
 " Detect filetypes
 filetype plugin indent on
@@ -89,6 +109,8 @@ set cursorline
 set hidden
 set spell
 set spellcapcheck=
+
+set mouse=a
 
 " Extra keybinds
 noremap <C-j> <C-w>j
@@ -128,7 +150,7 @@ if !exists('g:airline_symbols')
 endif
 let g:airline_left_sep = ' '
 let g:airline_right_sep = ' '
-let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.whitespace = 'Ξ'
@@ -168,7 +190,8 @@ nnoremap gd :call GoToDecMaybeYcm()<cr>
 
 nnoremap <leader>d :YcmCompleter GetDoc<cr>
 
-let g:ycm_semantic_triggers =  {
+let g:ycm_semantic_triggers = 
+    \ {
     \   'c' : ['->', '.', 're!\w'],
     \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
     \             're!\[.*\]\s', 're!\w'],
@@ -181,6 +204,10 @@ let g:ycm_semantic_triggers =  {
     \   'lua' : ['.', ':', 're!\w'],
     \   'erlang' : [':', 're!\w'],
     \ }
+
+""" Vebugger
+let g:vebugger_leader='<Leader>d'
+"let g:vebugger_path_gdb='rust-gdb'
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -206,7 +233,7 @@ let g:UltiSnipsUsePythonVersion = 2
 "let g:syntastic_javascript_checkers = ['eslint']
 "
 """ Neomake
-au! BufWritePost * Neomake
+"au! BufWritePost * Neomake
 
 let g:neomake_error_sign = {'text': '>>', 'texthl': 'Error'}
 let g:neomake_warning_sign = {'text': '>>', 'texthl': 'Todo'}
@@ -226,11 +253,13 @@ au! BufWritePost *.ts TsuGeterrProject
 let g:vim_markdown_folding_disabled=1
 
 """ Autoformat
-nnoremap <leader>f :Autoformat<cr>
+nnoremap <leader>f :AutoFormat<cr>
 
 """ Rustpeg & LALRPOP highlighting
 au BufRead,BufNewFile *.rustpeg set filetype=rust
 au BufRead,BufNewFile *.lalrpop set filetype=rust
+
+au BufRead,BufNewFile *.mit set filetype=javascript
 
 """ Default workspaces
 " Workspace Setup
@@ -241,4 +270,6 @@ function! DefaultWorkspace()
     file Shell
 endfunction
 command! -register DefaultWorkspace call DefaultWorkspace()
-"au BufWrite *.py,*.js,*.rs,*.go,*.css,*.c,*.cpp,*.objc :Autoformat
+
+""" Remote stuff
+command! Nbde e scp://jhgilles@notesbydave.com//home/jhgilles/
